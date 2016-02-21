@@ -2,33 +2,22 @@
   "name": "livehour",
   "version": "0.0.0",
   "description": "craft beer hour live twitter stream",
-  "main": "app.js",
+  "main": "sever.js",
   "scripts": {
-    "watch": "watchify app.js -o public/js/bundle.js -v",
-    "browserify": "browserify app.js | uglifyjs > public/js/bundle.js",
-    "build": "npm run browserify ",
-    "start": "npm install"
+    "watch": "webpack -d --watch",
+    "build": "webpack -d",
+    "start": "node server/server.js"
   },
   "author": "Tom Wilderspin <tomwilderspin@gmail.com>",
   "dependencies": {
-    "express": "~4.9.7",
-    "express-handlebars": "~1.1.0",
-    "flux": "^2.1.1",
-    "node-jsx": "~0.12.4",
-    "react": "0.14.6",
-    "socket.io": "^1.1.0",
-    "twitter": "^1.2.0"
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "webpack": "^1.12.13"
   },
   "devDependencies": {
-    "browserify": "~6.0.3",
-    "nodemon": "^1.2.1",
-    "reactify": "1.1.1",
-    "uglify-js": "~2.4.15",
-    "watchify": "^3.1.1"
-  },
-  "browserify": {
-    "transform": [
-      "reactify"
-    ]
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.3",
+    "babel-preset-es2015": "^6.5.0",
+    "babel-preset-react": "^6.5.0"
   }
 }
