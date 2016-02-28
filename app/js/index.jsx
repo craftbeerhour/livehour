@@ -4,6 +4,8 @@ import ClassNames from 'classnames';
 import Header from './components/Header.jsx';
 import TimeLine from './components/TimeLine.jsx';
 
+import { createStore } from 'redux'
+
 class App extends React.Component {
   
   constructor(props) {
@@ -20,8 +22,8 @@ class App extends React.Component {
 
 var tweets = [
   { userName: 'tomwilderspin', text: 'hi this is an awesome tweet', timeStamp: 'Sat Feb 27 19:12:30 +0000 2016'},
-  { userName: 'craftbeerhour', text: 'hi this is an awesome tweet at @someone', timeStamp: 'Sat Feb 27 19:20:30 +0000 2016'},
-  { userName: 'tomwilderspin', text: 'another tweet with some guff in it #stupidguff', timeStamp: 'Sat Feb 27 19:38:30 +0000 2016'},
+  { userName: 'craftbeerhour', text: 'hi this is an awesome tweet at @someone', timeStamp: 'Sun Feb 28 08:40:30 +0000 2016'},
+  { userName: 'tomwilderspin', text: 'another tweet with some guff in it #stupidguff', timeStamp: 'Sun Feb 28 08:42:30 +0000 2016'},
   ];
 
 var hourName = 'CraftBeerHour';

@@ -22,9 +22,10 @@ class Tweet extends React.Component {
     render() {
         
         var badgeClass = ClassNames('timeline-badge'),
-            panelClass = ClassNames('timeline-panel');
+            panelClass = ClassNames('timeline-panel'),
+            invertedItemClass = ClassNames({"timeline-inverted": this.props.tweetInverted});
             
-            return (<li><div className={badgeClass}></div><div className={panelClass}>
+            return (<li className={invertedItemClass}><div className={badgeClass}></div><div className={panelClass}>
                         <TweetHeading timeFrom={this.state.tweetTime} />
                         <TweetBody tweetContent={this.state.tweetContent} tweetUser={this.state.tweetUser} />
                         </div>

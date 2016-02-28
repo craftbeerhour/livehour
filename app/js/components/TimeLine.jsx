@@ -23,10 +23,21 @@ class TimeLine extends React.Component {
         
         var tweets = [];
         
-        this.props.tweets.forEach(function(tweet){
-            tweets.push(
-            <Tweet tweetUser={tweet.userName} offsetTime={new Date().now} tweetTime={tweet.timeStamp} tweetContent={tweet.text} />
-            );
+        this.props.tweets.forEach(function(tweet, index){
+            var tweetInverted = false; 
+            if (index % 2) {
+                tweetInverted = true;
+            }
+            
+            tweets = [...tweets,
+            <Tweet 
+                tweetInverted={tweetInverted}
+                tweetUser={tweet.userName}
+                offsetTime={tweet.offsetTime}
+                tweetTime={tweet.timeStamp}
+                tweetContent={tweet.text} 
+            />
+            ];
         });
         return (<ul className={timelineClass}>{tweets.reverse()}</ul>);
     }
