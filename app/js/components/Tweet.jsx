@@ -8,9 +8,7 @@ class Tweet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tweetUser: this.props.tweetUser,
-            tweetTime: this.getTweetTime(this.props.offsetTime, this.props.tweetTime),
-            tweetContent: this.props.tweetContent
+            tweetTime: this.getTweetTime(this.props.offsetTime, new Date().now),
         };
     }
     

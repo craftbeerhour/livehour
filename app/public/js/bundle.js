@@ -94,7 +94,7 @@
 	      return _react2.default.createElement(
 	        'div',
 	        { className: (0, _classnames2.default)('container') },
-	        _react2.default.createElement(_Header2.default, { hourName: this.props.hourName }),
+	        _react2.default.createElement(_Header2.default, { hourName: 'CraftBeerHour' }),
 	        _react2.default.createElement(_TimeLine2.default, { tweets: this.props.tweets })
 	      );
 	    }
@@ -102,10 +102,6 @@
 	
 	  return App;
 	}(_react2.default.Component);
-	
-	var tweets = [{ userName: 'tomwilderspin', text: 'hi this is an awesome tweet', timeStamp: 'Sat Feb 27 19:12:30 +0000 2016' }, { userName: 'craftbeerhour', text: 'hi this is an awesome tweet at @someone', timeStamp: 'Sun Feb 28 08:40:30 +0000 2016' }, { userName: 'tomwilderspin', text: 'another tweet with some guff in it #stupidguff', timeStamp: 'Sun Feb 28 08:42:30 +0000 2016' }];
-	
-	var hourName = 'CraftBeerHour';
 	
 	(0, _reactDom.render)(_react2.default.createElement(App, { tweets: tweets, hourName: hourName }), document.getElementById('app'));
 
@@ -20437,9 +20433,7 @@
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Tweet).call(this, props));
 	
 	        _this.state = {
-	            tweetUser: _this.props.tweetUser,
-	            tweetTime: _this.getTweetTime(_this.props.offsetTime, _this.props.tweetTime),
-	            tweetContent: _this.props.tweetContent
+	            tweetTime: _this.getTweetTime(_this.props.offsetTime, new Date().now)
 	        };
 	        return _this;
 	    }
