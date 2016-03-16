@@ -1,17 +1,18 @@
-import {RECEIVE_TWEETS, REQUEST_TWEETS } from '../actions'
+import Moment from 'moment'
+
+import {FETCH_TWEETS, ADD_TWEETS } from '../constants/actionTypes'
 
 
-let firebase = new Firebase('https://cbh-livehour.firebaseio.com/');
+const firebase = new Firebase('https://cbh-livehour.firebaseio.com/');
 
 export default store => next => action => {
     
     //grabs tweets from firebase
     
-    if(action.type === REQUEST_TWEETS  ) {
-        firebase.child(action.dataSetName).on('value', function(data){
+    if(action.type === FETCH_TWEETS  ) {
+        firebase.child('cbh-rainbow').on('value', function(data){
             
             const newData = data.val();
-            
             
             const tweets = Object.keys(newData).map( (id) => {
                
@@ -19,12 +20,12 @@ export default store => next => action => {
                return {
                     id,
                     user: tweet.user.screen_name,
-                    time: tweet.created_at,
+                    time: Moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
                     text: tweet.text
                 }
             });
             
-            next({type: RECEIVE_TWEETS, tweets});
+            next({type: ADD_TWEETS, tweets});
         })
     }
     
