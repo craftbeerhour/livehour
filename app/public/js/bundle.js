@@ -71,6 +71,11 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var initialState = {
+	    tweetBuffer: [],
+	    tweetRegulator: {
+	        timeoutId: 0,
+	        delay: 1000
+	    },
 	    reactView: {
 	        tweets: [{ id: 123, user: 'tomwilderspin', time: 'a minute ago', text: 'hi some tweet content #craftbeerhour' }],
 	        hourName: 'CraftBeerHour'
@@ -34528,7 +34533,7 @@
 
 	function getTweets() {
 	  return {
-	    type: actionTypes.FETCH_TWEETS
+	    type: actionTypes.REQUEST_TWEETS
 	  };
 	}
 
@@ -34541,8 +34546,9 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	var FETCH_TWEETS = exports.FETCH_TWEETS = "FETCH_TWEETS";
-	var ADD_TWEETS = exports.ADD_TWEETS = "ADD_TWEETS";
+	var REQUEST_TWEETS = exports.REQUEST_TWEETS = "REQUEST_TWEETS";
+	var ADD_TWEET = exports.ADD_TWEET = "ADD_TWEET";
+	var NEW_TWEETS = exports.NEW_TWEETS = "NEW_TWEETS";
 
 /***/ },
 /* 542 */
@@ -47765,10 +47771,14 @@
 
 	var _firebaseTweets2 = _interopRequireDefault(_firebaseTweets);
 
+	var _tweetRegulator = __webpack_require__(1049);
+
+	var _tweetRegulator2 = _interopRequireDefault(_tweetRegulator);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function configureStore(initialState) {
-	  return (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, _firebaseTweets2.default), _DevTools2.default.instrument()));
+	  return (0, _redux.createStore)(_reducers2.default, initialState, (0, _redux.compose)((0, _redux.applyMiddleware)(_reduxThunk2.default, _firebaseTweets2.default, _tweetRegulator2.default), _DevTools2.default.instrument()));
 	}
 
 /***/ },
@@ -47804,6 +47814,14 @@
 
 	var _reactView2 = _interopRequireDefault(_reactView);
 
+	var _tweetBuffer = __webpack_require__(1048);
+
+	var _tweetBuffer2 = _interopRequireDefault(_tweetBuffer);
+
+	var _tweetRegulator = __webpack_require__(1051);
+
+	var _tweetRegulator2 = _interopRequireDefault(_tweetRegulator);
+
 	var _redux = __webpack_require__(457);
 
 	var _reactRouterRedux = __webpack_require__(529);
@@ -47812,6 +47830,8 @@
 
 	var rootReducer = (0, _redux.combineReducers)({
 	    reactView: _reactView2.default,
+	    tweetBuffer: _tweetBuffer2.default,
+	    tweetRegulator: _tweetRegulator2.default,
 	    routing: _reactRouterRedux.routerReducer
 	});
 
@@ -47837,9 +47857,13 @@
 	  var action = arguments[1];
 
 	  switch (action.type) {
-	    case _actionTypes.ADD_TWEETS:
-	      var newTweetList = [].concat(_toConsumableArray(state.tweets), _toConsumableArray(action.tweets));
-	      return Object.assign({}, state, { tweets: newTweetList });
+	    case _actionTypes.REQUEST_TWEETS:
+	      return Object.assign({}, state, { fetchingTweets: true });
+	    case _actionTypes.ADD_TWEET:
+	      var tweetList = [action.tweet].concat(_toConsumableArray(state.tweets));
+	      return Object.assign({}, state, { tweets: tweetList });
+	    case _actionTypes.NEW_TWEETS:
+	      return Object.assign({}, state, { fetchingTweets: false });
 	    default:
 	      return state;
 	  }
@@ -47871,7 +47895,7 @@
 
 	            //grabs tweets from firebase
 
-	            if (action.type === _actionTypes.FETCH_TWEETS) {
+	            if (action.type === _actionTypes.REQUEST_TWEETS) {
 	                firebase.child('cbh-rainbow').on('value', function (data) {
 
 	                    var newData = data.val();
@@ -47885,9 +47909,9 @@
 	                            time: (0, _moment2.default)(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
 	                            text: tweet.text
 	                        };
-	                    });
+	                    }).reverse();
 
-	                    next({ type: _actionTypes.ADD_TWEETS, tweets: tweets });
+	                    next({ type: _actionTypes.NEW_TWEETS, tweets: tweets });
 	                });
 	            }
 
@@ -60697,6 +60721,96 @@
 	    return zh_tw;
 
 	}));
+
+/***/ },
+/* 1048 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = tweetBuffer;
+
+	var _actionTypes = __webpack_require__(541);
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function tweetBuffer() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+
+	    switch (action.type) {
+	        case _actionTypes.NEW_TWEETS:
+	            return [].concat(_toConsumableArray(state), _toConsumableArray(action.tweets));
+	        case _actionTypes.ADD_TWEET:
+	            return state.slice(0, 0).concat(state.slice(1));
+	        default:
+	            return state;
+	    }
+	}
+
+/***/ },
+/* 1049 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _actionTypes = __webpack_require__(541);
+
+	//regulates the feed of tweets to the timeline (stops mass insertions)
+
+	exports.default = function (store) {
+	  return function (next) {
+	    return function (action) {
+
+	      if (!store.getState().tweetBuffer.length) {
+	        clearInterval(store.getState().tweetRegulator.timeoutId);
+	      }
+
+	      if (!store.getState().tweetBuffer.length) {
+	        return next(action);
+	      }
+
+	      var timeoutId = setInterval(function () {
+	        return next({ type: _actionTypes.ADD_TWEET, tweet: tweet, timeoutId: timeoutId });
+	      }, store.getState().tweetRegulator.delay);
+
+	      return next(action);
+	    };
+	  };
+	};
+
+/***/ },
+/* 1050 */,
+/* 1051 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = tweetRegulator;
+
+	var _actionTypes = __webpack_require__(541);
+
+	function tweetRegulator() {
+	    var state = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	    var action = arguments[1];
+
+	    switch (action.type) {
+	        case _actionTypes.ADD_TWEET:
+	            return Object.assign({}, state, { timeoutId: action.timeoutId });
+	        default:
+	            return state;
+	    }
+	}
 
 /***/ }
 /******/ ]);
