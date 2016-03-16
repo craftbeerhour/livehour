@@ -1,18 +1,7 @@
+import * as actionTypes from '../constants/actionTypes'
 
-export const REQUEST_TWEETS = 'REQUEST_TWEETS';
-export const RECEIVE_TWEETS = 'RECEIVE_TWEETS';
-
-export function receiveTweets(tweets) {
-  return {
-    type: RECEIVE_TWEETS,
-    tweets: tweets,
-    receivedAt: Date.now()
+export function getTweets(){
+  return { 
+    type : actionTypes.FETCH_TWEETS
   }
-}
-
-export function requestTweets(dataSetName) {
-    return {
-        type: REQUEST_TWEETS,
-        dataSet:dataSetName
-    }
 }
