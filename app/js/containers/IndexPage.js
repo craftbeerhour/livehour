@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { getTweets } from '../actions'
+import { getTweets, showTweet } from '../actions'
 
 import TimeLine from '../components/TimeLine'
 
@@ -13,7 +13,7 @@ class IndexPage extends Component {
     }
  
      render(){
-         return <TimeLine tweets={this.props.tweets} />
+         return <TimeLine tweets={this.props.tweets} showTweets={this.props.ShowTweet} />
      }
     
 }
@@ -29,6 +29,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         getTweets: () => {
             dispatch(getTweets())
+        },
+        showTweet: () => {
+            dispatch(showTweet())
         }
     }
 }

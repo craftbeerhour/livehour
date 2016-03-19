@@ -4,10 +4,14 @@ import Tweet from './Tweet'
 
 export default class TimeLine extends Component {
     
+    componentWillUpdate(nextProps, nextState) {
+        this.props.showTweet()
+    }
+    
     render() {
         
         let tweets = this.props.tweets.map(function(tweet,index){
-            return <Tweet
+            return <Tweet 
                         key={tweet.id}
                         inverted={index % 2 ? true : false}
                         user={tweet.user}

@@ -6,3 +6,9 @@ export function getTweets(){
   }
 }
 
+export function showTweet(){
+  return {
+    type: actionTypes.SHOW_TWEET
+  }
+}
+

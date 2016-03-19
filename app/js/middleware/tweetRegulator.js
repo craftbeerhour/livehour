@@ -1,21 +1,22 @@
-import { ADD_TWEET, NEW_TWEETS } from '../constants/actionTypes'
+import { ADD_TWEET, SHOW_TWEET } from '../constants/actionTypes'
 
 //regulates the feed of tweets to the timeline (stops mass insertions)
 export default store => next => action => {
   
   if (!store.getState().tweetBuffer.length) {
-    clearInterval(store.getState().tweetRegulator.timeoutId)
+    return next(action)
   }
   
-  if (!store.getState().tweetBuffer.length) {
+  if (action.type != SHOW_TWEET) {
     return next(action)
   }
     
-
-  let timeoutId = setInterval(
-    () => next({type: ADD_TWEET, tweet: tweet, timeoutId: timeoutId }),
+  const timeoutId = setTimeout(
+    () => next({type: ADD_TWEET, tweet: action.tweet, timeoutId: timeoutId }),
     store.getState().tweetRegulator.delay
   )
   
-   return next(action)
+   return function clear(timeoutId) {
+     clearTimeout(timeoutId);
+   }
 }
