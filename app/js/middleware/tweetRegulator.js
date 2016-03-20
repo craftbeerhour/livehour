@@ -6,10 +6,6 @@ export default store => next => action => {
   if (!store.getState().tweetBuffer.length) {
     return next(action)
   }
-  
-  if (action.type != SHOW_TWEET) {
-    return next(action)
-  }
     
   const timeoutId = setTimeout(
     () => next({type: ADD_TWEET, tweet: action.tweet, timeoutId: timeoutId }),

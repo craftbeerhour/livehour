@@ -14,11 +14,10 @@ export default store => next => action => {
             
             const newData = data.val();
             
-            const tweets = Object.keys(newData).map( (id) => {
-               
-               const tweet = newData[id];
+            const tweets = newData.map( (tweet) => {
+              
                return {
-                    id,
+                    id: tweet.id,
                     user: tweet.user.screen_name,
                     time: Moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
                     text: tweet.text

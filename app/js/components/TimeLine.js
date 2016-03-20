@@ -5,7 +5,7 @@ import Tweet from './Tweet'
 export default class TimeLine extends Component {
     
     componentWillUpdate(nextProps, nextState) {
-        this.props.showTweet()
+        this.props.showTweets()
     }
     
     render() {

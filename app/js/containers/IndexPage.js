@@ -13,7 +13,7 @@ class IndexPage extends Component {
     }
  
      render(){
-         return <TimeLine tweets={this.props.tweets} showTweets={this.props.ShowTweet} />
+         return <TimeLine tweets={this.props.tweets} showTweets={this.props.showTweet} />
      }
     
 }

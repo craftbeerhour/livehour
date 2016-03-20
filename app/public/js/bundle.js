@@ -34490,7 +34490,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement(_TimeLine2.default, { tweets: this.props.tweets, showTweets: this.props.ShowTweet });
+	            return _react2.default.createElement(_TimeLine2.default, { tweets: this.props.tweets, showTweets: this.props.showTweet });
 	        }
 	    }]);
 
@@ -34601,7 +34601,7 @@
 	    _createClass(TimeLine, [{
 	        key: 'componentWillUpdate',
 	        value: function componentWillUpdate(nextProps, nextState) {
-	            this.props.showTweet();
+	            this.props.showTweets();
 	        }
 	    }, {
 	        key: 'render',
@@ -47879,7 +47879,8 @@
 	      var tweetList = [action.tweet].concat(_toConsumableArray(state.tweets));
 	      return Object.assign({}, state, { tweets: tweetList });
 	    case _actionTypes.NEW_TWEETS:
-	      return Object.assign({}, state, { fetchingTweets: false });
+	      var tweets = [action.tweets.slice(0, 1)].concat(_toConsumableArray(state.tweets));
+	      return Object.assign({}, state, { fetchingTweets: false, tweets: tweets });
 	    default:
 	      return state;
 	  }
@@ -47906,7 +47907,8 @@
 
 	    switch (action.type) {
 	        case _actionTypes.NEW_TWEETS:
-	            return [].concat(_toConsumableArray(state), _toConsumableArray(action.tweets));
+	            var tweets = !state.length ? action.tweets.slice(0, 0).concat(action.tweets.slice(1)) : action.tweets;
+	            return [].concat(_toConsumableArray(state), _toConsumableArray(tweets));
 	        case _actionTypes.ADD_TWEET:
 	            return state.slice(0, 0).concat(state.slice(1));
 	        default:
@@ -47970,11 +47972,10 @@
 
 	                    var newData = data.val();
 
-	                    var tweets = Object.keys(newData).map(function (id) {
+	                    var tweets = newData.map(function (tweet) {
 
-	                        var tweet = newData[id];
 	                        return {
-	                            id: id,
+	                            id: tweet.id,
 	                            user: tweet.user.screen_name,
 	                            time: (0, _moment2.default)(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
 	                            text: tweet.text
@@ -60811,10 +60812,6 @@
 	    return function (action) {
 
 	      if (!store.getState().tweetBuffer.length) {
-	        return next(action);
-	      }
-
-	      if (action.type != _actionTypes.SHOW_TWEET) {
 	        return next(action);
 	      }
 
