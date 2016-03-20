@@ -6,10 +6,11 @@ export default function reactView(state = {}, action) {
     case REQUEST_TWEETS :
       return Object.assign( {}, state, {fetchingTweets: true})
     case ADD_TWEET :
+      
       const tweetList = [action.tweet, ...state.tweets]
       return Object.assign({}, state, {tweets: tweetList})
     case NEW_TWEETS:
-      const tweets = [action.tweets.slice(0,1), ...state.tweets]
+      const tweets = [...action.tweets.slice(0,1), ...state.tweets]
       return Object.assign({}, state, {fetchingTweets: false, tweets: tweets})
     default :
       return state

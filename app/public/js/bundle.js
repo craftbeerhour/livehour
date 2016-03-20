@@ -47876,10 +47876,11 @@
 	    case _actionTypes.REQUEST_TWEETS:
 	      return Object.assign({}, state, { fetchingTweets: true });
 	    case _actionTypes.ADD_TWEET:
+
 	      var tweetList = [action.tweet].concat(_toConsumableArray(state.tweets));
 	      return Object.assign({}, state, { tweets: tweetList });
 	    case _actionTypes.NEW_TWEETS:
-	      var tweets = [action.tweets.slice(0, 1)].concat(_toConsumableArray(state.tweets));
+	      var tweets = [].concat(_toConsumableArray(action.tweets.slice(0, 1)), _toConsumableArray(state.tweets));
 	      return Object.assign({}, state, { fetchingTweets: false, tweets: tweets });
 	    default:
 	      return state;
@@ -47972,7 +47973,9 @@
 
 	                    var newData = data.val();
 
-	                    var tweets = newData.map(function (tweet) {
+	                    var tweets = Object.keys(newData).map(function (key) {
+
+	                        var tweet = newData[key];
 
 	                        return {
 	                            id: tweet.id,
@@ -60815,8 +60818,12 @@
 	        return next(action);
 	      }
 
+	      if (!action.type == _actionTypes.SHOW_TWEET) {
+	        return next(action);
+	      }
+
 	      var timeoutId = setTimeout(function () {
-	        return next({ type: _actionTypes.ADD_TWEET, tweet: action.tweet, timeoutId: timeoutId });
+	        return next({ type: _actionTypes.ADD_TWEET, tweet: store.getState().tweetBuffer[0] });
 	      }, store.getState().tweetRegulator.delay);
 
 	      return function clear(timeoutId) {

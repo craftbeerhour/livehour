@@ -12,9 +12,11 @@ export default store => next => action => {
     if(action.type === REQUEST_TWEETS  ) {
         firebase.child('cbh-rainbow').on('value', function(data){
             
-            const newData = data.val();
+            let newData = data.val()
             
-            const tweets = newData.map( (tweet) => {
+            const tweets = Object.keys(newData).map( (key) => {
+                
+                let tweet = newData[key]
               
                return {
                     id: tweet.id,
