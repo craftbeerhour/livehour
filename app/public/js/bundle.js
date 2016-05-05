@@ -72,12 +72,9 @@
 
 	var initialState = {
 	    tweetBuffer: [],
-	    tweetRegulator: {
-	        timeoutId: 0,
-	        delay: 1000
-	    },
 	    reactView: {
-	        tweets: [{ id: 123, user: 'tomwilderspin', time: 'a minute ago', text: 'hi some tweet content #craftbeerhour' }],
+	        playbackSpeed: 1,
+	        tweets: [],
 	        hourName: 'CraftBeerHour'
 
 	    }
@@ -34610,7 +34607,7 @@
 	            var tweets = this.props.tweets.map(function (tweet, index) {
 	                return _react2.default.createElement(_Tweet2.default, {
 	                    key: tweet.id,
-	                    inverted: index % 2 ? true : false,
+	                    inverted: tweet.inverted,
 	                    user: tweet.user,
 	                    time: tweet.time,
 	                    text: tweet.text
@@ -47847,7 +47844,6 @@
 	var rootReducer = (0, _redux.combineReducers)({
 	    reactView: _reactView2.default,
 	    tweetBuffer: _tweetBuffer2.default,
-	    tweetRegulator: _tweetRegulator2.default,
 	    routing: _reactRouterRedux.routerReducer
 	});
 
@@ -47876,7 +47872,6 @@
 	    case _actionTypes.REQUEST_TWEETS:
 	      return Object.assign({}, state, { fetchingTweets: true });
 	    case _actionTypes.ADD_TWEET:
-
 	      var tweetList = [action.tweet].concat(_toConsumableArray(state.tweets));
 	      return Object.assign({}, state, { tweets: tweetList });
 	    case _actionTypes.NEW_TWEETS:
@@ -47981,7 +47976,8 @@
 	                            id: tweet.id,
 	                            user: tweet.user.screen_name,
 	                            time: (0, _moment2.default)(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
-	                            text: tweet.text
+	                            text: tweet.text,
+	                            timeStamp: tweet.timestamp_ms
 	                        };
 	                    }).reverse();
 
@@ -60808,7 +60804,7 @@
 
 	var _actionTypes = __webpack_require__(541);
 
-	//regulates the feed of tweets to the timeline (stops mass insertions)
+	//pushes tweets to the view based on real time play back.
 
 	exports.default = function (store) {
 	  return function (next) {
@@ -60822,9 +60818,17 @@
 	        return next(action);
 	      }
 
+	      var newTweetTime = store.getState().tweetBuffer[0].timeStamp;
+
+	      var lastTweetTime = store.getState().reactView.tweets.length != 0 ? store.getState().reactView.tweets[0].timeStamp : 0;
+
+	      var playbackSpeed = store.getState().reactView.playbackSpeed;
+
+	      var delay = lastTweetTime == 0 ? Math.ceil(1000 / playbackSpeed) : Math.ceil((lastTweetTime - newTweetTime) / playbackSpeed);
+
 	      var timeoutId = setTimeout(function () {
 	        return next({ type: _actionTypes.ADD_TWEET, tweet: store.getState().tweetBuffer[0] });
-	      }, store.getState().tweetRegulator.delay);
+	      }, delay);
 
 	      return function clear(timeoutId) {
 	        clearTimeout(timeoutId);

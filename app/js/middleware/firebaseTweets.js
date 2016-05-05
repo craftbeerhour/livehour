@@ -22,7 +22,8 @@ export default store => next => action => {
                     id: tweet.id,
                     user: tweet.user.screen_name,
                     time: Moment(tweet.created_at, 'dd MMM DD HH:mm:ss ZZ YYYY', 'en').fromNow(),
-                    text: tweet.text
+                    text: tweet.text,
+                    timeStamp: tweet.timestamp_ms
                 }
             }).reverse()
             

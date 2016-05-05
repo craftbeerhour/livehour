@@ -10,10 +10,11 @@ export default class TimeLine extends Component {
     
     render() {
         
+        
         let tweets = this.props.tweets.map(function(tweet,index){
             return <Tweet 
                         key={tweet.id}
-                        inverted={index % 2 ? true : false}
+                        inverted={tweet.inverted}
                         user={tweet.user}
                         time={tweet.time}
                         text={tweet.text}

@@ -10,12 +10,9 @@ import configureStore from './store/configureStore'
 
 const initialState = {
     tweetBuffer: [],
-    tweetRegulator: {
-        timeoutId: 0,
-        delay: 1000
-    },
     reactView: {
-        tweets: [{id:123, user:'tomwilderspin', time:'a minute ago', text:'hi some tweet content #craftbeerhour'}],
+        playbackSpeed: 1,
+        tweets: [],
         hourName: 'CraftBeerHour'
         
     }
